@@ -1,4 +1,4 @@
-.PHONY: lint format
+.PHONY: lint format install-hooks
 
 lint:
 	./gradlew spotlessCheck
@@ -10,3 +10,6 @@ format:
 	./scripts/swiftformat iosApp/iosApp --config .swiftformat
 	./scripts/swiftlint --fix --config .swiftlint.yml
 	$(MAKE) lint
+
+install-hooks:
+	git config core.hooksPath .githooks
