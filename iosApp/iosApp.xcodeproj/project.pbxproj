@@ -73,6 +73,7 @@
 			buildPhases = (
 				9E7902F89FF7B703DB8ED4FF /* Compile Kotlin Framework */,
 				10959EDA58B11C696D4928FC /* Sources */,
+				CB965E5A34248AFAFB44D092 /* Lint Swift */,
 				412EF24B00AF60D010AD5217 /* Frameworks */,
 				672D493EB322F4696F402C03 /* Resources */,
 			);
@@ -153,6 +154,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+		};
+		CB965E5A34248AFAFB44D092 /* Lint Swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Lint Swift";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nREPOSITORY_ROOT=\"$SRCROOT/..\"\ncd \"$REPOSITORY_ROOT\"\n\"$REPOSITORY_ROOT/scripts/swiftformat\" \"$SRCROOT/iosApp\" --lint --config \"$REPOSITORY_ROOT/.swiftformat\"\n\"$REPOSITORY_ROOT/scripts/swiftlint\" lint --config \"$REPOSITORY_ROOT/.swiftlint.yml\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

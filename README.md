@@ -1,7 +1,5 @@
 # Kindred
 
----
-
 This is a Kotlin Multiplatform project targeting Android, iOS.
 
 * [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
@@ -29,6 +27,23 @@ Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
 
 - Android tests: `./gradlew :shared:testAndroidHostTest`
 - iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
+
+### Code quality
+
+Formatting and linting commands require macOS with `curl`, `shasum`, and `unzip`; these are included with macOS.
+SwiftLint requires a full Xcode installation, not only the Command Line Tools.
+The wrapper automatically uses `/Applications/Xcode.app` when `DEVELOPER_DIR` is not set.
+Xcode is also required to build or run the iOS app.
+
+- Check all formatting and Swift lint rules: `make lint`
+- Apply formatting and SwiftLint fixes, then recheck: `make format`
+- Enable the pre-commit lint hook once per checkout after cloning or switching branches: `make install-hooks`
+- Check Kotlin formatting only: `./gradlew spotlessCheck`
+- Apply Kotlin formatting only: `./gradlew spotlessApply`
+
+The Swift wrappers download pinned official macOS releases of SwiftFormat and SwiftLint on first use.
+Downloads are SHA-256 checksum-verified and cached in `$HOME/Library/Caches/kindred-tools` by default.
+Set `KINDRED_TOOLS_DIR` to choose another cache location; CI should cache that directory between jobs.
 
 ---
 

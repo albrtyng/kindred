@@ -6,4 +6,24 @@ plugins {
     alias(libs.plugins.composeMultiplatform) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
+    alias(libs.plugins.spotless)
+}
+
+spotless {
+    kotlin {
+        target("**/*.kt")
+        targetExclude("**/build/**")
+        ktfmt().googleStyle().configure {
+            it.setBlockIndent(4)
+            it.setContinuationIndent(4)
+        }
+    }
+    kotlinGradle {
+        target("**/*.gradle.kts")
+        targetExclude("**/build/**")
+        ktfmt().googleStyle().configure {
+            it.setBlockIndent(4)
+            it.setContinuationIndent(4)
+        }
+    }
 }
