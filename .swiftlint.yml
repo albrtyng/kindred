@@ -1,0 +1,14 @@
+included:
+  - iosApp/iosApp
+
+opt_in_rules:
+  - empty_count
+  - explicit_init
+  - first_where
+  - sorted_first_last
+
+reporter: xcode
+
+type_name:
+  excluded:
+    - iOSApp

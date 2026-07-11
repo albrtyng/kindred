@@ -13,21 +13,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.kindred.core.model.Post
 
-private val samplePosts = listOf(
-    Post(author = "@albert", caption = "A quiet afternoon."),
-    Post(author = "@robbie", caption = "Lunch in the park."),
-    Post(author = "@hailey", caption = "Golden hour."),
-    Post(author = "@neil", caption = "Rain on the windows."),
-    Post(author = "@tyler", caption = "First coffee of the day."),
-)
+private val samplePosts =
+    listOf(
+        Post(author = "@albert", caption = "A quiet afternoon."),
+        Post(author = "@robbie", caption = "Lunch in the park."),
+        Post(author = "@hailey", caption = "Golden hour."),
+        Post(author = "@neil", caption = "Rain on the windows."),
+        Post(author = "@tyler", caption = "First coffee of the day."),
+    )
 
 @Composable
 internal fun FeedScreen() {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .safeContentPadding(),
+        modifier =
+            Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .safeContentPadding()
     ) {
         item {
             Text(

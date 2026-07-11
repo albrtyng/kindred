@@ -1,0 +1,69 @@
+#!/bin/sh
+set -eu
+
+tool_name=SwiftFormat
+version=0.62.1
+url=https://github.com/nicklockwood/SwiftFormat/releases/download/0.62.1/swiftformat.zip
+expected_sha256=7cb1cb1fae04932047c7015441c543848e8e60e1572d808d080e0a1f1661114a
+
+if [ "$(uname -s)" != "Darwin" ]; then
+    printf '%s\n' "$tool_name is supported only on macOS." >&2
+    exit 1
+fi
+
+cache_dir=${KINDRED_TOOLS_DIR:-"$HOME/Library/Caches/kindred-tools"}
+binary="$cache_dir/swiftformat-$version"
+
+if [ ! -x "$binary" ]; then
+    for command in curl shasum unzip mktemp; do
+        if ! command -v "$command" >/dev/null 2>&1; then
+            printf '%s\n' "$tool_name requires $command to download its pinned release." >&2
+            exit 1
+        fi
+    done
+
+    if ! mkdir -p "$cache_dir"; then
+        printf '%s\n' "Unable to create $tool_name cache directory: $cache_dir" >&2
+        exit 1
+    fi
+
+    archive=$(mktemp "$cache_dir/.swiftformat-$version.XXXXXX")
+    extraction_dir=$(mktemp -d "$cache_dir/.swiftformat-$version.XXXXXX")
+    cleanup() {
+        rm -f "$archive"
+        rm -rf "$extraction_dir"
+    }
+    trap cleanup 0
+    trap 'cleanup; exit 1' 1 2 15
+
+    if ! curl --fail --location --retry 3 --output "$archive" "$url"; then
+        printf '%s\n' "Failed to download $tool_name $version." >&2
+        exit 1
+    fi
+
+    actual_sha256=$(shasum -a 256 "$archive")
+    actual_sha256=${actual_sha256%% *}
+    if [ "$actual_sha256" != "$expected_sha256" ]; then
+        printf '%s\n' "$tool_name $version checksum verification failed." >&2
+        exit 1
+    fi
+
+    if ! unzip -q "$archive" -d "$extraction_dir"; then
+        printf '%s\n' "Failed to extract $tool_name $version." >&2
+        exit 1
+    fi
+    if [ ! -f "$extraction_dir/swiftformat" ]; then
+        printf '%s\n' "$tool_name $version archive did not contain swiftformat." >&2
+        exit 1
+    fi
+
+    chmod 755 "$extraction_dir/swiftformat"
+    if ! mv -f "$extraction_dir/swiftformat" "$binary"; then
+        printf '%s\n' "Failed to install $tool_name $version in $cache_dir." >&2
+        exit 1
+    fi
+    cleanup
+    trap - 0 1 2 15
+fi
+
+exec "$binary" "$@"

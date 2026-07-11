@@ -17,11 +17,7 @@ import com.example.kindred.core.model.Post
 
 @Composable
 internal fun PostCard(post: Post) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-    ) {
+    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Text(
             text = post.author,
             style = MaterialTheme.typography.titleMedium,
@@ -30,10 +26,10 @@ internal fun PostCard(post: Post) {
         Spacer(modifier = Modifier.height(12.dp))
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(280.dp)
-                .background(MaterialTheme.colorScheme.secondaryContainer),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .height(280.dp)
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
             contentAlignment = Alignment.Center,
         ) {
             Text("Photo")
