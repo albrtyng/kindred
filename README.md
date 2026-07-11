@@ -37,7 +37,7 @@ Xcode is also required to build or run the iOS app.
 
 - Check all formatting and Swift lint rules: `make lint`
 - Apply formatting and SwiftLint fixes, then recheck: `make format`
-- Enable the pre-commit lint hook: `make install-hooks`
+- Enable the pre-commit lint hook once per checkout after cloning or switching branches: `make install-hooks`
 - Check Kotlin formatting only: `./gradlew spotlessCheck`
 - Apply Kotlin formatting only: `./gradlew spotlessApply`
 
