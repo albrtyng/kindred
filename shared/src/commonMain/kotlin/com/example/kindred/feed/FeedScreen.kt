@@ -9,6 +9,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.kindred.core.model.Post
@@ -24,6 +28,9 @@ private val samplePosts =
 
 @Composable
 internal fun FeedScreen() {
+    // The screen owns like state; cards receive only their value and an event callback.
+    var likedPostAuthors by remember { mutableStateOf(setOf("@albert")) }
+
     LazyColumn(
         modifier =
             Modifier.fillMaxSize()
@@ -38,8 +45,20 @@ internal fun FeedScreen() {
             )
         }
 
-        items(samplePosts) { post ->
-            PostCard(post)
+        items(samplePosts, key = { it.author }) { post ->
+            val isLiked = post.author in likedPostAuthors
+            PostCard(
+                post = post,
+                isLiked = isLiked,
+                onLikeClick = {
+                    likedPostAuthors =
+                        if (isLiked) {
+                            likedPostAuthors - post.author
+                        } else {
+                            likedPostAuthors + post.author
+                        }
+                },
+            )
         }
     }
 }

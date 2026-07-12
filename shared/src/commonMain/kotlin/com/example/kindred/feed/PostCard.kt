@@ -16,7 +16,11 @@ import androidx.compose.ui.unit.dp
 import com.example.kindred.core.model.Post
 
 @Composable
-internal fun PostCard(post: Post) {
+internal fun PostCard(
+    post: Post,
+    isLiked: Boolean,
+    onLikeClick: () -> Unit,
+) {
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Text(
             text = post.author,
@@ -38,5 +42,12 @@ internal fun PostCard(post: Post) {
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(post.caption)
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        LikeButton(
+            isLiked = isLiked,
+            onClick = onLikeClick,
+        )
     }
 }
