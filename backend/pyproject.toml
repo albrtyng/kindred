@@ -60,6 +60,7 @@ ignore = [
   "E114", # Ruff formatter owns indentation
   "E117", # Ruff formatter owns indentation
   "E501", # Formatter cannot always wrap URLs or long strings
+  "TD002", # TODOs do not require an author
   "W191", # Ruff formatter owns indentation style
 ]
 

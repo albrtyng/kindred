@@ -8,7 +8,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Kindred API",
         description="API for sharing private albums and photos with the people who matter.",
-        # TODO(albert): Derive this from release metadata once release automation exists.
+        # TODO: Derive this from release metadata once release automation exists.
         # https://linear.app/albrtyng/issue/KIN-15/scaffold-a-python-fastapi-backend
         version="0.1.0",
     )
