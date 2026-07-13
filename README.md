@@ -27,6 +27,18 @@ Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
 
 - Android tests: `./gradlew :shared:testAndroidHostTest`
 - iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
+- Backend tests: `make python-test`
+
+### Backend API
+
+The [`backend`](./backend) directory contains the Python 3.13 FastAPI service. It uses `uv` to
+manage locked dependencies, `pytest` for unit and integration tests, Ruff for formatting and
+linting, and Ty for type checking.
+
+- Start the API: `uv --directory backend run uvicorn kindred_api.main:app --reload`
+- Run backend formatting and lint checks: `make python-lint`
+- Run backend type checks: `make python-typecheck`
+- Generate the OpenAPI artifact: `make generate-openapi`
 
 ### Code quality
 
