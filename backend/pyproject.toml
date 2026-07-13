@@ -1,0 +1,71 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kindred-api"
+version = "0.1.0"
+description = "Kindred backend API"
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "fastapi",
+  "pydantic-settings",
+  "uvicorn[standard]",
+]
+
+[dependency-groups]
+dev = [
+  "httpx",
+  "pytest",
+  "pytest-asyncio",
+  "ruff",
+  "ty",
+]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+asyncio_mode = "auto"
+markers = [
+  "integration: tests that exercise the API through HTTPX",
+  "unit: isolated tests without HTTP or persistence",
+]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+  "E",     # pycodestyle errors
+  "F",     # Pyflakes: unused imports, undefined names, and similar errors
+  "I",     # import ordering
+  "UP",    # Python 3.13 syntax and standard-library modernization
+  "FAST",  # FastAPI-specific correctness rules
+  "W",     # pycodestyle warnings
+  "B",     # likely bugs and surprising Python behavior
+  "SIM",   # simpler equivalent code
+  "C4",    # clearer comprehensions
+  "PIE",   # general Python improvements
+  "PERF",  # common performance issues
+  "S",     # security checks
+  "ASYNC", # async correctness, relevant for FastAPI
+  "PT",    # pytest conventions
+  "ANN",   # required type annotations
+  "TD",    # TODO ownership and ticket references
+]
+ignore = [
+  "E111", # Ruff formatter owns indentation
+  "E114", # Ruff formatter owns indentation
+  "E117", # Ruff formatter owns indentation
+  "E501", # Formatter cannot always wrap URLs or long strings
+  "TD002", # TODOs do not require an author
+  "W191", # Ruff formatter owns indentation style
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.ty.environment]
+python-version = "3.13"
