@@ -10,6 +10,7 @@ format:
 	./gradlew spotlessApply
 	./scripts/swiftformat iosApp/iosApp --config .swiftformat
 	./scripts/swiftlint --fix --config .swiftlint.yml
+	uv --directory backend run --locked ruff check --fix .
 	uv --directory backend run --locked ruff format .
 	$(MAKE) lint
 
