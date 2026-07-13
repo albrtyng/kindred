@@ -27,7 +27,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   lint:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 15
 
     steps:
@@ -38,6 +38,15 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
       - uses: gradle/actions/setup-gradle@v6
 
       - uses: actions/cache@v6
@@ -46,5 +55,7 @@ jobs:
           key: kindred-tools-${{ runner.os }}-${{ hashFiles('scripts/swiftformat', 'scripts/swiftlint') }}
           restore-keys: |
             kindred-tools-${{ runner.os }}-
+
+      - run: uv --directory backend sync --locked --all-groups
 
       - run: make lint
