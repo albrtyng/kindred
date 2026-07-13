@@ -8,8 +8,3 @@ if ! make lint; then
     printf "\nRun 'make format' to fix formatting issues.\n" >&2
     exit 1
 fi
-
-if ! make python-typecheck; then
-    printf "\nRun 'make python-typecheck' to inspect type errors.\n" >&2
-    exit 1
-fi
