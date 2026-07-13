@@ -4,6 +4,12 @@ set -eu
 repo_root=$(git rev-parse --show-toplevel)
 cd "$repo_root"
 
+branch_name=$(git branch --show-current)
+if [ "$branch_name" != "main" ] && ! printf '%s\n' "$branch_name" | grep -Eq '^(feat|fix|ci|chore|docs|refactor|test)/KIN-[0-9]+-[a-z0-9]+(-[a-z0-9]+)*$'; then
+    printf "\nBranch names must match <type>/KIN-<number>-<description>.\n" >&2
+    exit 1
+fi
+
 if ! make lint; then
     printf "\nRun 'make format' to fix formatting issues.\n" >&2
     exit 1

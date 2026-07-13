@@ -1,4 +1,4 @@
-name: Lint
+name: Test
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: lint-${{ github.workflow }}-${{ github.ref }}
+  group: test-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -18,24 +18,10 @@ jobs:
     with:
       branch-name: ${{ github.head_ref }}
 
-  gitleaks:
-    needs: validate-branch-name
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  lint:
+  test:
     needs: validate-branch-name
     runs-on: macos-15
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v7
@@ -56,15 +42,11 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v6
 
-      - uses: actions/cache@v6
-        with:
-          path: ~/Library/Caches/kindred-tools
-          key: kindred-tools-${{ runner.os }}-${{ hashFiles('scripts/swiftformat', 'scripts/swiftlint') }}
-          restore-keys: |
-            kindred-tools-${{ runner.os }}-
-
       - run: uv --directory backend sync --locked --all-groups
 
-      - run: make lint
+      - run: make python-test
 
-      - run: make python-typecheck
+      - name: Run app tests
+        env:
+          DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+        run: ./gradlew :shared:testAndroidHostTest :shared:iosSimulatorArm64Test

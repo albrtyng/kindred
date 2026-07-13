@@ -1,0 +1,64 @@
+name: Generate OpenAPI spec
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backend-openapi-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-branch-name:
+    uses: ./.github/workflows/validate-branch.yml
+    with:
+      branch-name: ${{ github.head_ref }}
+
+  verify-and-generate:
+    needs: validate-branch-name
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install locked dependencies
+        working-directory: backend
+        run: uv sync --locked
+
+      - name: Generate OpenAPI document
+        working-directory: backend
+        run: uv run python scripts/generate_openapi.py --output openapi.json
+
+      - name: Commit updated OpenAPI document
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          if git diff --quiet -- backend/openapi.json; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add backend/openapi.json
+          git commit -m "ci: update OpenAPI specification"
+          git push
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kindred-openapi
+          path: backend/openapi.json
+          if-no-files-found: error
