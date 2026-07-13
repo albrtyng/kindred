@@ -59,3 +59,5 @@ jobs:
       - run: uv --directory backend sync --locked --all-groups
 
       - run: make lint
+
+      - run: make python-typecheck

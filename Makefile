@@ -5,7 +5,6 @@ lint:
 	./scripts/swiftformat iosApp/iosApp --lint --config .swiftformat
 	./scripts/swiftlint lint --config .swiftlint.yml
 	$(MAKE) python-lint
-	$(MAKE) python-typecheck
 
 format:
 	./gradlew spotlessApply
