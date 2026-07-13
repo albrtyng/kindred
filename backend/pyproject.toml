@@ -53,6 +53,7 @@ select = [
   "ASYNC", # async correctness, relevant for FastAPI
   "PT",    # pytest conventions
   "ANN",   # required type annotations
+  "TD",    # TODO ownership and ticket references
 ]
 ignore = [
   "E111", # Ruff formatter owns indentation
