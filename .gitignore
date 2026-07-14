@@ -20,4 +20,6 @@ captures
 node_modules/
 docs/plans/
 backend/.venv/
+backend/.env
+backend/.env.test
 __pycache__/

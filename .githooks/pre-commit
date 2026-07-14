@@ -10,6 +10,16 @@ if [ "$branch_name" != "main" ] && ! printf '%s\n' "$branch_name" | grep -Eq '^(
     exit 1
 fi
 
+if ! command -v gitleaks >/dev/null 2>&1; then
+    printf "\nInstall Gitleaks before committing: brew install gitleaks\n" >&2
+    exit 1
+fi
+
+if ! gitleaks git --pre-commit --staged --no-banner; then
+    printf "\nGitleaks found a potential secret in staged changes.\n" >&2
+    exit 1
+fi
+
 if ! make lint; then
     printf "\nRun 'make format' to fix formatting issues.\n" >&2
     exit 1

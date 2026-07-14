@@ -12,14 +12,32 @@ uv sync --all-groups
 
 ## Development
 
-Start the local server:
+Copy the local configuration template, then start the server:
 
 ```sh
-uv run uvicorn kindred_api.main:app --reload
+cp .env.example .env
+uv run --env-file .env uvicorn kindred_api.main:app --reload
 ```
 
 The health endpoint is available at `GET /health`. FastAPI serves the OpenAPI schema at
 `GET /openapi.json`.
+
+## Database Configuration
+
+The API reads settings from `KINDRED_` environment variables. `.env.example` documents local
+development values. Copy `.env.test.example` to the ignored `.env.test` file to customize test
+settings. Development and production require an async PostgreSQL URL:
+
+```sh
+export KINDRED_ENVIRONMENT=development
+export KINDRED_DATABASE_URL='postgresql+asyncpg://kindred:kindred@localhost:5432/kindred'
+```
+
+Pytest loads `.env.test` automatically when present and otherwise falls back to `.env.test.example`.
+The profile configures an isolated in-memory SQLite database using `sqlite+aiosqlite`. Integration
+tests start a disposable PostgreSQL Docker container and inject its connection URL into the FastAPI
+application. Invalid URLs, unsupported drivers, and missing non-test URLs prevent the API from
+starting.
 
 ## Quality Checks
 
@@ -32,6 +50,9 @@ uv run ty check
 uv run pytest tests/unit
 uv run pytest tests/integration
 ```
+
+`make python-test` requires a running Docker daemon because it includes the PostgreSQL integration
+tests. Database migrations are not applied by the test container yet.
 
 Generate a deterministic OpenAPI document:
 
