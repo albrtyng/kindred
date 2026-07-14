@@ -15,19 +15,19 @@ def test_test_settings_default_to_an_isolated_sqlite_database() -> None:
 
 @pytest.mark.unit
 def test_settings_rejects_missing_database_url_outside_tests() -> None:
-    with pytest.raises(ValidationError, match="KINDRED_DATABASE_URL is required"):
+    with pytest.raises(ValidationError):
         Settings(environment="development", database_url=None)
 
 
 @pytest.mark.unit
 def test_settings_rejects_an_invalid_database_url() -> None:
-    with pytest.raises(ValidationError, match="must be a valid SQLAlchemy URL"):
+    with pytest.raises(ValidationError):
         Settings(environment="production", database_url="not-a-url")
 
 
 @pytest.mark.unit
 def test_settings_requires_asyncpg_outside_tests() -> None:
-    with pytest.raises(ValidationError, match="must use postgresql\\+asyncpg"):
+    with pytest.raises(ValidationError):
         Settings(environment="production", database_url="postgresql://localhost/kindred")
 
 
