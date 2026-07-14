@@ -13,7 +13,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  validate-branch-name:
+    uses: ./.github/workflows/validate-branch.yml
+    with:
+      branch-name: ${{ github.head_ref }}
+
   gitleaks:
+    needs: validate-branch-name
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -27,6 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   lint:
+    needs: validate-branch-name
     runs-on: macos-15
     timeout-minutes: 15
 

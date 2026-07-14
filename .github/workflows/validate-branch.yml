@@ -1,0 +1,33 @@
+name: Validate branch name
+
+on:
+  workflow_call:
+    inputs:
+      branch-name:
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate branch name
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    env:
+      BRANCH_NAME: ${{ inputs.branch-name }}
+
+    steps:
+      - name: Enforce branch naming policy
+        run: |
+          if [ -z "$BRANCH_NAME" ]; then
+            exit 0
+          fi
+          if [ "$BRANCH_NAME" = "main" ]; then
+            exit 0
+          fi
+          if [[ ! "$BRANCH_NAME" =~ ^(feat|fix|ci|chore|docs|refactor|test)/KIN-[0-9]+-[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+            echo "Branch names must match <type>/KIN-<number>-<description>."
+            exit 1
+          fi

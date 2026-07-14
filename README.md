@@ -40,6 +40,12 @@ linting, and Ty for type checking.
 - Run backend type checks: `make python-typecheck`
 - Generate the OpenAPI artifact: `make generate-openapi`
 
+### Branch naming
+
+Feature branches must follow `<type>/KIN-<number>-<description>`, where `type` is one of `feat`,
+`fix`, `ci`, `chore`, `docs`, `refactor`, or `test`. For example:
+`feat/KIN-15-scaffold-fastapi-backend`.
+
 ### Code quality
 
 Formatting and linting commands require macOS with `curl`, `shasum`, and `unzip`; these are included with macOS.

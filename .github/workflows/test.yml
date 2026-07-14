@@ -1,0 +1,89 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: test-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-branch-name:
+    uses: ./.github/workflows/validate-branch.yml
+    with:
+      branch-name: ${{ github.head_ref }}
+
+  changes:
+    needs: validate-branch-name
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      app: ${{ steps.filter.outputs.app }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            app:
+              - 'androidApp/**'
+              - 'iosApp/**'
+              - 'shared/**'
+              - '**/*.gradle.kts'
+              - 'gradle/**'
+              - 'gradle.properties'
+              - 'gradlew'
+              - 'gradlew.bat'
+              - '.github/workflows/test.yml'
+
+  python:
+    needs: validate-branch-name
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - run: uv --directory backend sync --locked --all-groups
+
+      - run: make python-test
+
+  native-app:
+    needs: [changes, validate-branch-name]
+    if: needs.changes.outputs.app == 'true'
+    runs-on: macos-15
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Run app tests
+        env:
+          DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+        run: ./gradlew :shared:testAndroidHostTest :shared:iosSimulatorArm64Test
