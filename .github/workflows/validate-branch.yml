@@ -24,6 +24,9 @@ jobs:
           if [ -z "$BRANCH_NAME" ]; then
             exit 0
           fi
+          if [ "$BRANCH_NAME" = "main" ]; then
+            exit 0
+          fi
           if [[ ! "$BRANCH_NAME" =~ ^(feat|fix|ci|chore|docs|refactor|test)/KIN-[0-9]+-[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
             echo "Branch names must match <type>/KIN-<number>-<description>."
             exit 1
