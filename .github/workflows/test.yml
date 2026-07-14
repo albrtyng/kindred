@@ -67,7 +67,7 @@ jobs:
 
       - run: make python-test
 
-  app:
+  native-app:
     needs: [changes, validate-branch-name]
     if: needs.changes.outputs.app == 'true'
     runs-on: macos-15
