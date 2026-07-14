@@ -58,6 +58,10 @@ jobs:
           git commit -m "ci: update OpenAPI specification"
           git push
 
+      - name: Verify generated OpenAPI document is committed
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+        run: git diff --exit-code -- backend/openapi.json
+
       - uses: actions/upload-artifact@v4
         with:
           name: kindred-openapi
