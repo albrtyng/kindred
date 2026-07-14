@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
   group: test-${{ github.workflow }}-${{ github.ref }}
@@ -18,8 +19,57 @@ jobs:
     with:
       branch-name: ${{ github.head_ref }}
 
-  test:
+  changes:
     needs: validate-branch-name
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      app: ${{ steps.filter.outputs.app }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            app:
+              - 'androidApp/**'
+              - 'iosApp/**'
+              - 'shared/**'
+              - '**/*.gradle.kts'
+              - 'gradle/**'
+              - 'gradle.properties'
+              - 'gradlew'
+              - 'gradlew.bat'
+              - '.github/workflows/test.yml'
+
+  python:
+    needs: validate-branch-name
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - run: uv --directory backend sync --locked --all-groups
+
+      - run: make python-test
+
+  app:
+    needs: [changes, validate-branch-name]
+    if: needs.changes.outputs.app == 'true'
     runs-on: macos-15
     timeout-minutes: 20
 
@@ -31,20 +81,7 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
-
-      - uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: backend/uv.lock
-
       - uses: gradle/actions/setup-gradle@v6
-
-      - run: uv --directory backend sync --locked --all-groups
-
-      - run: make python-test
 
       - name: Run app tests
         env:
