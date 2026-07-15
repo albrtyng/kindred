@@ -13,8 +13,7 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# KIN-18 has no ORM models yet. Import model modules here before using this metadata
-# when introducing Alembic autogeneration with the first persisted model.
+# Import model modules here before using this metadata when introducing Alembic autogeneration.
 target_metadata = Base.metadata
 
 
