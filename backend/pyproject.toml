@@ -9,6 +9,7 @@ description = "Kindred backend API"
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
 dependencies = [
+  "alembic>=1.18.5",
   "asyncpg>=0.31.0",
   "fastapi",
   "pydantic-settings",
