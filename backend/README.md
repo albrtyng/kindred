@@ -39,6 +39,26 @@ tests start a disposable PostgreSQL Docker container and inject its connection U
 application. Invalid URLs, unsupported drivers, and missing non-test URLs prevent the API from
 starting.
 
+## Database Migrations
+
+Alembic tracks each applied schema revision in the database. Copy `.env.example` to `.env` and
+create the local PostgreSQL database before running migration commands:
+
+```sh
+uv run --env-file .env alembic upgrade head
+```
+
+Create a revision, write and review its `upgrade()` and `downgrade()` operations, then apply it
+locally:
+
+```sh
+uv run --env-file .env alembic revision -m "describe schema change"
+uv run --env-file .env alembic upgrade head
+```
+
+Do not edit a migration after it has been applied outside your local database. Create a new revision
+to correct or evolve an existing schema instead.
+
 ## Quality Checks
 
 Run each check from this directory:
@@ -52,7 +72,7 @@ uv run pytest tests/integration
 ```
 
 `make python-test` requires a running Docker daemon because it includes the PostgreSQL integration
-tests. Database migrations are not applied by the test container yet.
+tests. The integration suite applies all Alembic migrations to its disposable PostgreSQL database.
 
 Generate a deterministic OpenAPI document:
 

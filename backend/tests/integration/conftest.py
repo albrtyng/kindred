@@ -1,3 +1,4 @@
+import logging
 from collections.abc import AsyncIterator, Iterator
 
 import pytest
@@ -8,12 +9,16 @@ from testcontainers.postgres import PostgresContainer
 from kindred_api.config import Settings
 from kindred_api.main import create_app
 
+logger = logging.getLogger(__name__)
+
 
 @pytest.fixture(scope="session")
 def postgres_database_url() -> Iterator[str]:
     """Start one disposable PostgreSQL database for the integration test session."""
     with PostgresContainer("postgres:17-alpine", driver="asyncpg") as postgres:
+        logger.info("PostgreSQL test container is ready.")
         yield postgres.get_connection_url()
+    logger.info("PostgreSQL test container stopped.")
 
 
 @pytest.fixture

@@ -9,6 +9,7 @@ description = "Kindred backend API"
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
 dependencies = [
+  "alembic>=1.18.5",
   "asyncpg>=0.31.0",
   "fastapi",
   "pydantic-settings",
@@ -31,6 +32,8 @@ dev = [
 [tool.pytest.ini_options]
 addopts = "-ra"
 asyncio_mode = "auto"
+log_cli = true
+log_cli_level = "INFO"
 markers = [
   "integration: tests that exercise the API through HTTPX",
   "unit: isolated tests without HTTP or persistence",
